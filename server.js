@@ -7,14 +7,14 @@ const port = process.env.PORT || 3000;
 const authorizedHosts=process.env.VCX_HOSTS_AUTHORIZED.split(", ");
 
 function checkHost(req){
-    if( authorizedHosts.includes(req.headers.host) )
+    if( authorizedHosts.includes(req.headers.origin) )
         return true;
     else
         return false;
 }
 
 function getSettings(req, name){
-    return (process.env["VCX_SETTINGS_"+name+"_"+((req.headers.host).toUpperCase().replace(/[^\w\s]/gi, ''))]) ?? (process.env["VCX_SETTINGS_"+name+"_default"]);
+    return (process.env["VCX_SETTINGS_"+name+"_"+((req.headers.origin).toUpperCase().replace(/[^\w\s]/gi, ''))]) ?? (process.env["VCX_SETTINGS_"+name+"_default"]);
 }
 
 app.post('/email', (req, res) => {
@@ -33,7 +33,7 @@ app.post('/email', (req, res) => {
             pass: process.env.VCX_EMAIL_PASSWORD
         }
         });
-        console.log(req.headers.host.replace(/[^\w\s]/gi, ''))
+        console.log(req.headers.origin.replace(/[^\w\s]/gi, ''))
 
 
         var mailOptions = {
@@ -71,7 +71,7 @@ app.post('/email', (req, res) => {
         });
     }
     else
-        res.send({type: "Error", message: 'Unauthorized host '+req.headers.host+"."});
+        res.send({type: "Error", message: 'Unauthorized host '+req.headers.origin+"."});
 
 });
 
