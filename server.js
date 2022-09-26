@@ -4,7 +4,7 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-const authorizedHosts=process.env.VCX_HOSTS_AUTHORIZED;
+const authorizedHosts=process.env.VCX_HOSTS_AUTHORIZED.split(", ");
 
 function checkHost(req){
     if( authorizedHosts.includes(req.headers.origin) )
