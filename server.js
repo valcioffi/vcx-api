@@ -4,7 +4,7 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-const authorizedHosts=process.env.VCX_HOSTS_AUTHORIZED.split(", ");
+const authorizedHosts=process.env.VCX_HOSTS_AUTHORIZED;
 
 function checkHost(req){
     if( authorizedHosts.includes(req.headers.origin) )
@@ -16,6 +16,16 @@ function checkHost(req){
 function getSettings(req, name){
     return (process.env["VCX_SETTINGS_"+name+"_"+((req.headers.origin).toUpperCase().replace(/[^\w\s]/gi, ''))]) ?? (process.env["VCX_SETTINGS_"+name+"_default"]);
 }
+
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', authorizedHosts);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    next();
+});
+
 
 app.post('/email', (req, res) => {
     const email = req.body;
